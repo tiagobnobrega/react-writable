@@ -1,17 +1,32 @@
 import {writable} from "../rewritable";
 
-export const store = writable(0);
-const useCounterA = ()=>{
-    const [count,setCount] = store.useSubscribe();
-    return [count,{
-        increment: (amount:number)=> {
-            setCount(count+amount);
+export type Todo = {
+    id?: string,
+    description: string,
+    isDone: boolean
+}
+
+export const store = writable([{id:1,description:"Teste",status:false}]);
+const useTodos = ()=>{
+    const [todos,setTodos] = store.useSubscribe();
+    return [todos,{
+        addTodo: (description:string)=> {
+            setTodos([...todos,{id: new Date().getTime(), description, isDone:false}]);
         },
-        decrement: (amount:number)=> {
-            setCount(count-amount);
+        toggleDone:(todo:Todo)=>{
+            todo.isDone = !todo.isDone;
+            setTodos(todos.map((t:Todo)=>t.id===todo.id ? todo: t));
         },
-        clear: ()=>setCount(0),
+        updateTodo: (todo:Todo)=>{
+            const todoIndex = todos.findIndex((e:Todo)=>e.id===todo.id);
+            if(todoIndex===-1) throw new Error("Todo not found:"+todo.id);
+            setTodos([...todos, {[todoIndex]:todo}]);
+        },
+        removeTodo: (todo:Todo)=>{
+            setTodos(todos.filter((e:Todo)=>e.id!==todo.id));
+        },
+        clear: ()=>setTodos([]),
     }];
 };
 
-export default useCounterA;
+export default useTodos;
