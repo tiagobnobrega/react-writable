@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import useTodos from "../state/useTodos";
+import useTodos from "./useTodos";
 
 const NewTodo: React.FC = ()=>{
     const [desc,setDesc] = useState("");

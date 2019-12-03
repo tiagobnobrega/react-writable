@@ -8,7 +8,10 @@ export type Todo = {
 }
 
 const persist = writablePersist(localStorage,"APP_TODOS");
-export const store = writable([{id:1,description:"Teste",status:false}], persist.starter);
+
+const initialState = {data: [{id:1,description:"Teste",isDone:false}], isFetching:false};
+export const store = writable(initialState, persist.starter);
+
 store.subscribe(persist.listener);
 
 const useTodos = ()=>{

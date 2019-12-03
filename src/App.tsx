@@ -1,9 +1,8 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import CounterA from "./components/CounterA";
-import TodoList from "./components/TodoList";
-import NewTodo from "./components/NewTodo";
+import TodoList from "./todo/TodoList";
+import NewTodo from "./todo/NewTodo";
 
 const App: React.FC = () => {
   return (
@@ -13,7 +12,6 @@ const App: React.FC = () => {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
-        <CounterA />
         <TodoList />
         <NewTodo />
       </header>
