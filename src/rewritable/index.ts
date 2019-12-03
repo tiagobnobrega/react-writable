@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-//types
+//*types
 interface IReadableStore{
     subscribe(run: (v: any) => void): Function;
     useSubscribe(): any[],
@@ -8,16 +8,18 @@ interface IWritableStore extends IReadableStore{
     update(fn: (v: any) => void): void
 }
 
-const noop: Function = (_: Function) => {
-};
+type StarterFunction = (fn:Function)=>Promise<Function>;
+
+//*helpers
+const noop: StarterFunction = async (_: Function) => {return noop};
 
 function safe_not_equal(a: any, b: any) {
     // eslint-disable-next-line eqeqeq,no-self-compare
     return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
 }
 
-//code
-export function writable(value: any, start:Function = noop): IWritableStore {
+//*code
+export function writable(value: any, start:StarterFunction = noop): IWritableStore {
     let stop: Function;
     const subscribers: Function[] = [];
 
@@ -35,9 +37,14 @@ export function writable(value: any, start:Function = noop): IWritableStore {
         const subscriber = run;
         subscribers.push(subscriber);
         if (subscribers.length === 1) {
-            stop = start(set) || noop;
+            Promise.resolve(start(set)).then(stopFn=>{
+                stop=stopFn;
+                run(value);
+            });
+        }else{
+            run(value);
         }
-        run(value);
+
         return () => {
             const index = subscribers.indexOf(subscriber);
             if (index !== -1) {

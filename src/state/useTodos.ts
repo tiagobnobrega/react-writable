@@ -1,4 +1,5 @@
 import {writable} from "../rewritable";
+import writablePersist from "../rewritable/writable-persist";
 
 export type Todo = {
     id?: string,
@@ -6,7 +7,10 @@ export type Todo = {
     isDone: boolean
 }
 
-export const store = writable([{id:1,description:"Teste",status:false}]);
+const persist = writablePersist(localStorage,"APP_TODOS");
+export const store = writable([{id:1,description:"Teste",status:false}], persist.starter);
+store.subscribe(persist.listener);
+
 const useTodos = ()=>{
     const [todos,setTodos] = store.useSubscribe();
     return [todos,{
